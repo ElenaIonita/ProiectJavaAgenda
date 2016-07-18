@@ -53,6 +53,10 @@ public class Subscriber implements Serializable {
           this.cnp=cnp;
           this.mobileNumber=new Phone(mobileNumber);
     }   
+
+    public Subscriber(String text, String text0, String text1, String text2) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     public long getId(){
         return id;

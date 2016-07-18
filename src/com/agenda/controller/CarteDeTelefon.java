@@ -5,6 +5,7 @@ package com.agenda.controller;
 
 import com.agenda.entity.Subscriber;
 import com.agenda.exceptions.IdenticalMembersException;
+import com.agenda.filecontrol.FileHandler;
 import com.agenda.login.LogIn;
 import java.io.File;
 import java.util.ArrayList;
@@ -102,12 +103,10 @@ public void editSubscriber(Subscriber newSubscriber) throws IdenticalMembersExce
  */
 public List<Subscriber> search(String content){
         List<Subscriber> temp = new ArrayList<>();
-        for(Subscriber subscriber: listSubscribers){
-            if(subscriber.getFirstName().toLowerCase().contains(content) || subscriber.getLastName().toLowerCase().contains(content)
-                    || Subscriber.getCnp().toLowerCase().contains(content) || subscriber.getMobileNumber().getPhone().toLowerCase().contains(content)){
-                temp.add(subscriber);
-            }
-        }
+        listSubscribers.stream().filter((Subscriber subscriber) -> (subscriber.getFirstName().toLowerCase().contains(content) || subscriber.getLastName().toLowerCase().contains(content)
+                || Subscriber.getCnp().toLowerCase().contains(content) || subscriber.getMobileNumber().getPhone().toLowerCase().contains(content))).forEach((subscriber) -> {
+                    temp.add(subscriber);
+      });
         return temp;
     }
 
@@ -140,6 +139,10 @@ public List<Subscriber> search(String content){
  */
     public void setListSubscribers(List<Subscriber> listSubscribers) {
         this.listSubscribers = listSubscribers;
+    }
+
+    private void setCurrentFile(File saveFile) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

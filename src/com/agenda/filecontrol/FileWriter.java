@@ -89,8 +89,8 @@ public void setFile(File file) {
     
 
 /**
- * Getter method that return the <tt>Abonat</tt> list that is written to the file.
- * @return Return the <tt>Abonat</tt> list that is written to the file.
+ * Getter method that return the <tt>Subscriber</tt> list that is written to the file.
+ * @return Return the <tt>Subscriber</tt> list that is written to the file.
  */
 public List<Subscriber> getListSubscribers() {
         return listSubscribers;
