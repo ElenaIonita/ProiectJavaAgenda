@@ -68,7 +68,7 @@ public class Agenda extends javax.swing.JFrame {
             @Override
             public void keyReleased(KeyEvent e) {
                 if(e.getKeyCode() == KeyEvent.VK_DELETE){
-                    int answer = JOptionPane.showConfirmDialog((Component) tableView, "You want delete this subscriber?");
+                    int answer = JOptionPane.showConfirmDialog((Component) tableView, "You want to delete a subscriber?");
                     if(answer == 0){
                       int row = tableView.getSelectedRow();
                       Subscriber subscriber = modelTabel.getListSubscribers().get(row);
@@ -225,14 +225,39 @@ public class Agenda extends javax.swing.JFrame {
         });
 
         jButtonEdit.setText("Edit");
+        jButtonEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEditActionPerformed(evt);
+            }
+        });
 
         jButton1.setText("First name");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Last name");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("CNP");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Mobile No.");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resurces/icons/sort_descending.png"))); // NOI18N
         jLabel2.setText("Sort by:");
@@ -323,6 +348,11 @@ public class Agenda extends javax.swing.JFrame {
         jRadioButtonFileSave.setSelected(true);
         jRadioButtonFileSave.setText("Save");
         jRadioButtonFileSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resurces/icons/save.png"))); // NOI18N
+        jRadioButtonFileSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonFileSaveActionPerformed(evt);
+            }
+        });
         fileMenu.add(jRadioButtonFileSave);
         fileMenu.add(jSeparator1);
 
@@ -369,6 +399,11 @@ public class Agenda extends javax.swing.JFrame {
         jRadioButtonSubcriberSearch.setSelected(true);
         jRadioButtonSubcriberSearch.setText("Search");
         jRadioButtonSubcriberSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resurces/icons/search.png"))); // NOI18N
+        jRadioButtonSubcriberSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButtonSubcriberSearchActionPerformed(evt);
+            }
+        });
         subscriberMenu.add(jRadioButtonSubcriberSearch);
 
         jRadioButtonSubscriberDelete.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_D, java.awt.event.InputEvent.ALT_MASK));
@@ -451,39 +486,123 @@ public class Agenda extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jRadioButtonFileExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonFileExitActionPerformed
-        // TODO add your handling code here:
+            int answer = JOptionPane.showConfirmDialog(this, "You want to save before exit?");
+        if(answer==0){
+            carteDeTelefon.savePhonebook();
+            System.exit(0);
+        }else {
+            System.exit(0);
+        }
     }//GEN-LAST:event_jRadioButtonFileExitActionPerformed
 
     private void jRadioButtonFileOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonFileOpenActionPerformed
-    
+            int answer = JOptionPane.showConfirmDialog(this, "You want to open a file?");
+        if(answer == 1){
+            carteDeTelefon.openPhonebook(true);
+        }
+        if(answer == 0){
+            carteDeTelefon.openPhonebook(false);
+        }
+        updateGUI();
     }//GEN-LAST:event_jRadioButtonFileOpenActionPerformed
 
     private void jRadioButtonSubscriberEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonSubscriberEditActionPerformed
-        // TODO add your handling code here:
+            int index = this.tableView.getSelectedRow();
+        if(index>=0){
+            SubscriberView addSubscriberView = new SubscriberView();
+            Subscriber oldSubscriber = modelTabel.getListSubscribers().get(index);
+            addSubscriberView.firstNameField.setText(oldSubscriber.getFirstName());
+            addSubscriberView.lastNameField.setText(oldSubscriber.getLastName());
+            addSubscriberView.cnpField.setText(oldSubscriber.getCnp());
+            addSubscriberView.phoneField.setText(oldSubscriber.getMobileNo().getPhone());
+            if(JOptionPane.showConfirmDialog(null, addSubscriberView.getAddSubscriberPanel(),"Edit the subscriber info.", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+                    Subscriber subscriber = new Subscriber(oldSubscriber.getId(), addSubscriberView.getFirstNameField().getText(), addSubscribertView.getLastNameField().getText(), 
+                        addSubscriberView.getCnp().getText(), addSubscriberView.getPhoneField().getText(), false);
+                    subscriber.setFromDb(true);
+                try {
+                    carteDeTelefon.editSubscriber(oldSubscriber, subscriber);
+                    JOptionPane.showMessageDialog(this, "Successful edit!", "Edit", JOptionPane.INFORMATION_MESSAGE);
+                    modelTabel.getListSubscribers().set(index, subscriber);
+                } catch (IdenticalMembersException | IllegalArgumentException ex) {
+                    Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(this, ex.getMessage(), "EROARE", JOptionPane.ERROR_MESSAGE);
+                }
+                updateGUI();
+            }
+        }
+        updateGUI();
     }//GEN-LAST:event_jRadioButtonSubscriberEditActionPerformed
 
     private void jRadioButtonSubscriberDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonSubscriberDeleteActionPerformed
-        // TODO add your handling code here:
+            int answer = JOptionPane.showConfirmDialog(this, "You want to delete this subscriber?");
+        if(answer == 0){
+            int index = this.tableView.getSelectedRow();
+            if(index>=0){
+                Subscriber subscriber = modelTabel.getListSubscribers().get(index);
+                carteDeTelefon.removeSubscriber(subscriber);
+                modelTabel.getListSubscribers().remove(subscriber);
+            }
+        }
+        updateGUI();
     }//GEN-LAST:event_jRadioButtonSubscriberDeleteActionPerformed
 
     private void jRadioButtonHelpLogInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonHelpLogInActionPerformed
-   
+            String pass = JOptionPane.showInputDialog(this, "Please enter the password!", "Log in", JOptionPane.INFORMATION_MESSAGE);
+        try{
+            if(carteDeTelefon.register(pass)){
+                addsTimer.stop();
+                this.addsPanel.setVisible(!carteDeTelefon.isRegistered());
+                this.fullVersion(carteDeTelefon.isRegistered());
+            }
+        }catch(NumberFormatException e){
+            Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, e);
+        }
     }//GEN-LAST:event_jRadioButtonHelpLogInActionPerformed
 
     private void jButtonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchActionPerformed
-        // TODO add your handling code here:
+            List<Subscriber> temp = carteDeTelefon.search(this.searchField.getText());
+        this.searchField.setText(null);
+        if(temp.size()<carteDeTelefon.getListSubscribers().size()){
+            this.resetButton.setBackground(Color.red);
+        }
+        modelTabel.setListSubscribers(temp);
+        updateGUI();
     }//GEN-LAST:event_jButtonSearchActionPerformed
 
     private void jButtonResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonResetActionPerformed
-        // TODO add your handling code here:
+        this.searchField.setText(null);
+        this.resetButton.setBackground(this.searchButton.getBackground());
+        modelTabel.setListSubscribers(carteDeTelefon.getListSubscribers());
+        updateGUI();
     }//GEN-LAST:event_jButtonResetActionPerformed
 
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
-        // TODO add your handling code here:
+                SubscriberView addSubscriberView = new SubscriberView();
+        if(JOptionPane.showConfirmDialog(null, addSubscriberView.getAddSubscriberPanel(),"Add a new subscriber.", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+            try{
+                Subscriber subscriber = new Subscriber(addSubscriberView.getFirstNameField().getText(), addSubscriberView.getLastNameField().getText(), 
+                    addSubscriberView.getCnpField().getText(), addSubscriberView.getPhoneField().getText());
+                carteDeTelefon.addSubscriber(subscriber);
+                JOptionPane.showMessageDialog(this, "The new subscriber has been added!", "Add", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IdenticalMembersException | IllegalArgumentException ex) {
+                Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "EROARE", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        updateGUI();
     }//GEN-LAST:event_jButtonAddActionPerformed
 
     private void jButtonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemoveActionPerformed
-        // TODO add your handling code here:
+                int answer = JOptionPane.showConfirmDialog(this, "You want to delete this subscriber?");
+        if(answer == 0){
+            int index = this.tableView.getSelectedRow();
+            if(index>=0){
+                Subscriber subscriber = modelTabel.getListSubscribers().get(index);
+                carteDeTelefon.removeSubscriber(subscriber);
+                modelTabel.getListSubscribers().remove(subscriber);
+            }
+        }
+        updateGUI();
     }//GEN-LAST:event_jButtonRemoveActionPerformed
 
     private void jTextFieldSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldSearchActionPerformed
@@ -491,7 +610,10 @@ public class Agenda extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldSearchActionPerformed
 
     private void jTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableMouseClicked
-        // TODO add your handling code here:
+            if (evt.getButton() == MouseEvent.BUTTON3){
+            rightMouseClick = this.tableView.getMousePosition();
+            this.editPopUp.show(tableView, rightMouseClick.x, rightMouseClick.y);
+        }
     }//GEN-LAST:event_jTableMouseClicked
 
     private void jRadioButtonSubscriberAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonSubscriberAddActionPerformed
@@ -514,6 +636,129 @@ public class Agenda extends javax.swing.JFrame {
            JOptionPane.showMessageDialog(this, "Phonebook\nElena Ionita\n@2016", "About", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_jRadioButtonHelpAboutActionPerformed
 
+    private void jRadioButtonFileSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonFileSaveActionPerformed
+            int answer = JOptionPane.showConfirmDialog(this, "You want to save the list?");
+        if(answer == 0){
+            carteDeTelefon.savePhonebook();
+        }
+    }//GEN-LAST:event_jRadioButtonFileSaveActionPerformed
+
+    private void jRadioButtonSubcriberSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButtonSubcriberSearchActionPerformed
+            List<Subscriber> temp = carteDeTelefon.search(this.searchField.getText());
+        this.searchField.setText(null);
+        if(temp.size()<carteDeTelefon.getListSubscribers().size()){
+            this.resetButton.setBackground(Color.red);
+        }
+        modelTabel.setListSubscribers(temp);
+        updateGUI();
+    }//GEN-LAST:event_jRadioButtonSubcriberSearchActionPerformed
+
+    private void jButtonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEditActionPerformed
+                int index = this.tableView.getSelectedRow();
+        if(index>=0){
+            SubscriberView addSubscriberView = new SubscriberView();
+            Subscriber oldSubscriber = modelTabel.getListSubscribers().get(index);
+            addSubscriberView.firstNameField.setText(oldSubscriber.getFirstName());
+            addSubscriberView.lastNameField.setText(oldSubscriber.getLastName());
+            addSubscriberView.cnpField.setText(oldSubscriber.getCnp());
+            addSubscriberView.phoneField.setText(oldSubscriber.getMobileNo().getPhone());
+            if(JOptionPane.showConfirmDialog(null, addSubscriberView.getAddSubscriberPanel(),"Edit the subscriber info.", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
+                    Subscriber subscriber = new Subscriber(oldSubscriber.getId(), addSubscriberView.getFirstNameField().getText(), addSubscribertView.getLastNameField().getText(), 
+                        addSubscriberView.getCnp().getText(), addSubscriberView.getPhoneField().getText(), false);
+                    subscriber.setFromDb(true);
+                try {
+                    carteDeTelefon.editSubscriber(oldSubscriber, subscriber);
+                    JOptionPane.showMessageDialog(this, "Successful edit!", "Edit", JOptionPane.INFORMATION_MESSAGE);
+                    modelTabel.getListSubscribers().set(index, subscriber);
+                } catch (IdenticalMembersException | IllegalArgumentException ex) {
+                    Logger.getLogger(Agenda.class.getName()).log(Level.SEVERE, null, ex);
+                    JOptionPane.showMessageDialog(this, ex.getMessage(), "EROARE", JOptionPane.ERROR_MESSAGE);
+                }
+                updateGUI();
+            }
+        }
+        updateGUI();
+    }//GEN-LAST:event_jButtonEditActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        modelTabel.orderBy(OrderTypes.BY_FIRSTNAME);
+        updateGUI();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+            modelTabel.orderBy(OrderTypes.BY_LASTNAME);
+        updateGUI();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        modelTabel.orderBy(OrderTypes.BY_CNP);
+        updateGUI();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        modelTabel.orderBy(OrderTypes.BY_PHONE_NUMBER);
+        updateGUI();
+    }//GEN-LAST:event_jButton4ActionPerformed
+    
+    
+    /**
+     * Initializare SplashScreen
+     */
+    
+    public static void initSplashScreen() {
+        SplashScreen splash = SplashScreen.getSplashScreen();
+        Font font = new Font("Verdana", Font.BOLD, 12);
+        Graphics2D mash = null;
+        mash = splash.createGraphics();
+        mash.setFont(font);
+        mash.setColor(Color.GRAY);
+        mash.fillRect(splash.getSize().width/3+25, splash.getSize().height/3, 250, 30);
+        mash.setColor(Color.WHITE);
+        mash.drawString("The phonebook is opening.", splash.getSize().width/3+35, splash.getSize().height/3 + 20);
+        splash.update();
+        try{
+            Thread.sleep(300);
+        }catch(InterruptedException e){
+            
+        }
+        mash.setColor(Color.GRAY);
+        mash.fillRect(splash.getSize().width/3+25, splash.getSize().height/3, 250, 30);
+        mash.setColor(Color.WHITE);
+        mash.drawString("Please wait.", splash.getSize().width/3+35, splash.getSize().height/3 + 20);
+        splash.update();
+        try{
+            Thread.sleep(100);
+        }catch(InterruptedException e){
+            
+        }
+        mash.setColor(Color.GRAY);
+        mash.fillRect(splash.getSize().width/3+25, splash.getSize().height/3, 250, 30);
+        mash.setColor(Color.WHITE);
+        mash.drawString("Loading...", splash.getSize().width/3+35, splash.getSize().height/3 + 20);
+        splash.update();
+        
+        try{
+            Thread.sleep(100);
+        }catch(InterruptedException e){
+            
+        }
+        mash.setColor(Color.GRAY);
+        mash.fillRect(splash.getSize().width/3+25, splash.getSize().height/3, 250, 30);
+        mash.setColor(Color.WHITE);
+        mash.drawString("Loading...", splash.getSize().width/3+35, splash.getSize().height/3 + 20);
+        splash.update();
+        try{
+            Thread.sleep(100);
+        }catch(InterruptedException e){
+            
+        }
+    }
+    
+    
+    
+    
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -588,21 +833,4 @@ public class Agenda extends javax.swing.JFrame {
     private javax.swing.JMenu subscriberMenu;
     // End of variables declaration//GEN-END:variables
 
-            @Override
-            public void keyTyped(KeyEvent e) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            private void updateGUI() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-    }
-
-    private void initComponents() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    private void initPopUp() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+}

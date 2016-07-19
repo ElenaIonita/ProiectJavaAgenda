@@ -101,6 +101,7 @@ public void editSubscriber(Subscriber newSubscriber) throws IdenticalMembersExce
  * @return 
  *          Return an Subscriber with the objects that contain the searched String
  */
+
 public List<Subscriber> search(String content){
         List<Subscriber> temp = new ArrayList<>();
         listSubscribers.stream().filter((Subscriber subscriber) -> (subscriber.getFirstName().toLowerCase().contains(content) || subscriber.getLastName().toLowerCase().contains(content)
